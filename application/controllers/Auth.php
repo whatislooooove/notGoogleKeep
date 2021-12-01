@@ -7,8 +7,14 @@
 class Auth extends CI_Controller
 {
 	public function index() {
+		session_start();
 		$this->load->view('templates/header');
-		$this->load->view('auth/signin');
+		if (array_key_exists('is_authorized', $_SESSION)) {
+			$this->load->view('notelist/home');
+		}
+		else {
+			$this->load->view('auth/signin');
+		}
 		$this->load->view('templates/footer');
 	}
 
@@ -21,14 +27,16 @@ class Auth extends CI_Controller
 			$response['errors'][] = 'bad=(';
 		}
 		else {
-			$login = $decodedPost['login'];
-			$pass = $decodedPost['password'];
+			$login = htmlspecialchars($decodedPost['login']);
+			$pass = htmlspecialchars($decodedPost['password']);
 
 			if ($this->auth_model->signin($login, $pass)) {
-				echo 'TRUE';
-				//переход на страницу с заметками, также сохранение данных в сессии
+				$response['success'] = 'Authorization successfully finished';
+				$_SESSION['is_authorized'] = true;
 			}
-			$response['errors'][] = 'Неправильный логин или пароль';
+			else {
+				$response['errors'][] = 'Неправильный логин или пароль';
+			}
 		}
 
 		$this->output->set_output(json_encode($response));

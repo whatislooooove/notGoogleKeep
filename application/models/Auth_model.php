@@ -6,7 +6,7 @@ class Auth_model extends CI_Model {
 //		parent::__construct();
 //	}
 
-	public function signin($login, $password)
+	public function signin($login, $password): ?bool
 	{
 		$data = ['login' => $login];
 		$this->load->database();
@@ -15,7 +15,7 @@ class Auth_model extends CI_Model {
 			->get('user')
 			->row_array();
 
-		if (count($users) === 0) {
+		if ((is_null($users)) || (count($users) === 0)) {
 			return false;
 		}
 

@@ -57,11 +57,13 @@ Vue.component('signin', {
 			if (this.errors.length == 0) {
 				axios.post('/index.php/auth/signin', formInputs)
 					.then(res => {
-						console.log(res.data); // Результат ответа от сервера
 						if (res.data.errors) {
 							this.errors = res.data.errors;
 							this.login = null;
 							this.password = null;
+						}
+						else {
+							window.location.reload();
 						}
 					});
 			}
