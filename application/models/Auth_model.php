@@ -6,8 +6,10 @@ class Auth_model extends CI_Model {
 //		parent::__construct();
 //	}
 
-	public function signin($login, $password): ?bool
+	public function signin($login, $password): ?array
 	{
+		$response = [];
+
 		$data = ['login' => $login];
 		$this->load->database();
 		$users = $this->db
@@ -16,13 +18,17 @@ class Auth_model extends CI_Model {
 			->row_array();
 
 		if ((is_null($users)) || (count($users) === 0)) {
-			return false;
+			$response['is_authorized'] = false;
 		}
 
 		if (password_verify($password, $users['password'])) {
-			return true;
+			$response['is_authorized'] = true;
+			$response['user_name'] = $users['name'];
+		}
+		else {
+			$response['is_authorized'] = false;
 		}
 
-		return false;
+		return $response;
 	}
 }

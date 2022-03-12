@@ -1,4 +1,18 @@
+<?php
+/** @var string $user_name */
+?>
+<?php
+if (array_key_exists('is_authorized', $_SESSION)):
+?>
 <div id="app">
+	<div class="userBlock row mx-4">
+		<div class="userName">
+			<?=$user_name?>
+		</div>
+		<div class="logout">
+			<a href="/index.php/auth/logout">Выйти</a>
+		</div>
+	</div>
 	<div id="addNoteBtn" class="row addNote m-4 justify-content-center addNote m-4">
 		<button id="show-modal" @click="showModal = true" type="button" class="btn btn-primary col-sm-4 col-6" data-toggle="modal" data-target=".bd-example-modal-lg">Добавить заметку?</button>
 		<!-- use the modal component, pass in the prop -->
@@ -21,3 +35,7 @@
 		</div>
 	</div>
 </div>
+<?php
+else:
+	header('/index.php/auth');
+endif;?>
