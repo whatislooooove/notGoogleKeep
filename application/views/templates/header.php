@@ -25,13 +25,18 @@
 
 						<div class="modal-body">
 							<slot name="body">
-								default body
+								<label>Введите заголовок</label>
+								<input type="text" class="form-control" id="title" v-model="title" aria-describedby="emailHelp"
+									   placeholder="Enter title" required>
+								<label>Введите описание</label>
+								<textarea type="text" class="form-control" id="description" v-model="description" aria-describedby="emailHelp"
+									   placeholder="Enter description" required></textarea>
 							</slot>
 						</div>
 
 						<div class="modal-footer">
 							<slot name="footer">
-								<button class="btn btn-primary" @click="$emit('close')">
+								<button class="btn btn-primary" @click="addNote">
 									Добавить
 								</button>
 								<button class="btn btn-secondary" @click="$emit('close')">
@@ -46,6 +51,6 @@
 	</script>
 </head>
 <body>
-<div class="header">
-	тут хэдер?<br>
+<div class="header text-center justify-content-center align-items-center row">
+	тут хэдер<br>
 </div>

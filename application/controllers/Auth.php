@@ -6,14 +6,20 @@
  */
 class Auth extends CI_Controller
 {
-	public function index() {
+	public function index($logout=false) {
 		session_start();
+		$this->load->model('notelist_model');
+
 		$this->load->view('templates/header');
-		if (array_key_exists('is_authorized', $_SESSION)) {
+		if (array_key_exists('is_authorized', $_SESSION) && !$logout) {
 			$data['user_name'] = $_SESSION['user_name'];
+			$data['notes'] = $this->notelist_model->get_notes();
 			$this->load->view('notelist/home', $data);
 		}
 		else {
+			session_destroy();
+			session_unset();
+			$logout = false;
 			$this->load->view('auth/signin');
 		}
 		$this->load->view('templates/footer');
@@ -46,10 +52,6 @@ class Auth extends CI_Controller
 	}
 
 	public function logout() {
-		session_unset();
-		session_write_close();
-		unset($_SESSION);
-
-		$this->index();
+		$this->index(true);
 	}
 }
