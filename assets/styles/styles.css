@@ -78,3 +78,7 @@
 body {
 	margin-right: 12px;
 }
+
+.msg {
+	background: springgreen;
+}

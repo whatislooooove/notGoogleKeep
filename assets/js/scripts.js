@@ -14,8 +14,7 @@ Vue.component("modal-add", {
 				.then(res => {
 					if (res.data.errors) {
 						this.errors = res.data.errors;
-					}
-					else {
+					} else {
 						// window.location.reload();
 						console.log('good!')
 					}
@@ -40,8 +39,7 @@ Vue.component("modal-edit", {
 				.then(res => {
 					if (res.data.errors) {
 						this.errors = res.data.errors;
-					}
-					else {
+					} else {
 						// window.location.reload();
 						console.log('good!')
 					}
@@ -84,7 +82,8 @@ Vue.component('signin', {
 					<label for="exampleInputPassword1">Введите пароль</label>
 					<input type="password" v-model="password" class="form-control" id="password" placeholder="Password" required>
 				</div>
-				<button type="submit" class="btn btn-primary">Авторизоваться</button>
+				<button type="submit" class="btn btn-primary my-3">Авторизоваться</button>
+				<div>Нет аккаунта? <a href="/index.php/auth/register" class="">Зарегистрируйтесь</a></div>
 			</div>
 		</form>
 	</div>`,
@@ -119,9 +118,97 @@ Vue.component('signin', {
 							this.errors = res.data.errors;
 							this.login = null;
 							this.password = null;
-						}
-						else {
+						} else {
 							window.location.href = '/';
+						}
+					});
+			}
+		}
+	}
+})
+
+Vue.component('signup', {
+	template: `
+	<div class="row h-100 justify-content-center align-items-center">
+  		<form class="signInForm" @submit.prevent="onSignUp">
+   			<p v-if="errors.length">
+      			<b>Пожалуйста исправьте указанные ошибки:</b>
+       			<ul>
+          			<li v-for="error in errors">{{ error }}</li>
+       			</ul>
+     		</p>
+     		<p v-if="msg !== null" class="msg">
+      			{{msg}}
+     		</p>
+			<div class="content">
+				<div class="form-group">
+					<label for="name">Введите ваше имя</label>
+						<input type="text" v-model="name" class="form-control" id="name" aria-describedby="emailHelp"
+							placeholder="Enter name" required>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Введите логин</label>
+						<input type="text" v-model="login" class="form-control" id="login" aria-describedby="emailHelp"
+							placeholder="Enter login" required>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Введите пароль</label>
+					<input type="password" v-model="password" class="form-control" id="password" placeholder="Password" required>
+				</div>
+				<div class="form-group">
+					<label for="repeatInputPassword1">Повторите пароль</label>
+					<input type="password" v-model="repeatpassword" class="form-control" id="repeatpassword" placeholder="Repeat password" required>
+				</div>
+				<button type="submit" class="btn btn-primary my-3">Зарегистрироваться</button>
+				<div>Есть аккаунт? <a href="/index.php/auth" class="">Войти</a></div>
+			</div>
+  		</form>
+ 	</div>`,
+	data() {
+		return {
+			name: null,
+			login: null,
+			password: null,
+			repeatpassword: null,
+			errors: [],
+			msg: null
+		}
+	},
+	methods: {
+		onSignUp() {
+			let formInputs = {
+				name: this.name,
+				login: this.login,
+				password: this.password,
+				repeatpassword: this.repeatpassword
+			}
+			// this.login = null;
+			// this.password = null;
+			this.errors = [];
+			this.msg = null;
+
+			if (formInputs.login.length < 4) {
+				this.errors.push('Логин слишком короткий (4 символа минимум)')
+			}
+			if (formInputs.password.length < 4) {
+				this.errors.push('Пароль слишком короткий (4 символа минимум)')
+			}
+			if (formInputs.password !== formInputs.repeatpassword) {
+				this.errors.push('Пароли не совпадают')
+			}
+
+			if (this.errors.length == 0) {
+				axios.post('/index.php/auth/signup', formInputs)
+					.then(res => {
+						this.name = null;
+						this.login = null;
+						this.password = null;
+						this.repeatpassword = null;
+
+						if (res.data.errors) {
+							this.errors = res.data.errors;
+						} else {
+							this.msg = 'Вы успешно зарегистрировались';
 						}
 					});
 			}

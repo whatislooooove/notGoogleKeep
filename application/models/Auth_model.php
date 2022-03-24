@@ -26,4 +26,35 @@ class Auth_model extends CI_Model {
 
 		return $response;
 	}
+
+	public function signup($name, $login, $password): ?bool {
+
+		$data = [
+			'name' => $name,
+			'login' => $login,
+			'password' => password_hash($password, PASSWORD_BCRYPT)
+		];
+
+		if (!$this->db->insert('user', $data)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function isUserExist($login): ?bool {
+		$data = ['login' => $login];
+		$this->load->database();
+		$user = $this->db
+			->where($data)
+			->select('login, name')
+			->get('user')
+			->row_array();
+
+		if (is_array($user)) {
+			return true;
+		}
+
+		return false;
+	}
 }
