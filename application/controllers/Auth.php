@@ -13,7 +13,7 @@ class Auth extends CI_Controller
 		$this->load->view('templates/header');
 		if (array_key_exists('is_authorized', $_SESSION) && !$logout) {
 			$data['user_name'] = $_SESSION['user_name'];
-			$data['notes'] = $this->notelist_model->get_notes();
+			$data['notes'] = $this->notelist_model->get_notes($_SESSION['login']);
 			$this->load->view('notelist/home', $data);
 		}
 		else {
@@ -52,6 +52,8 @@ class Auth extends CI_Controller
 				$response['success'] = 'Authorization successfully finished';
 				$_SESSION['is_authorized'] = true;
 				$_SESSION['user_name'] = $auth['user_name'];
+				$_SESSION['id_user'] = $auth['id_user'];
+				$_SESSION['login'] = $auth['login'];
 			}
 			else {
 				$response['errors'][] = 'Неправильный логин или пароль';

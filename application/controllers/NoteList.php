@@ -28,10 +28,15 @@ class NoteList extends CI_Controller
 
 		$response['success'] = 'Note successfully added';
 		if (count($decodedPost) !== 0) {
-			if (!$this->notelist_model->add($decodedPost)) {
+			if (array_key_exists('error', $response = $this->notelist_model->add($decodedPost))) {
 				$response['errors'][] = 'Something wrong. Note was not added';
 			}
+			else {
+				$response['id_note'] = $this->db->insert_id();
+			}
 		}
+
+		$this->output->set_output(json_encode($response));
 	}
 
 	public function delete() {
@@ -44,5 +49,17 @@ class NoteList extends CI_Controller
 				$response['errors'][] = 'Something wrong. Note was not deleted';
 			}
 		}
+	}
+
+	public function getnotesjson() {
+		session_start();
+		$info = json_decode(file_get_contents('php://input'), true);
+		$this->load->model('notelist_model');
+
+		$notes = $this->notelist_model->get_notes($_SESSION['login']);
+
+		$this->output->set_output(json_encode($notes));
+//		file_put_contents('logNotesJson.txt', print_r(json_encode($notes), true));
+//		file_put_contents('logNotessess.txt', print_r($_SESSION, true));
 	}
 }

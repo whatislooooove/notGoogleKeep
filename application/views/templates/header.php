@@ -51,6 +51,4 @@
 	</script>
 </head>
 <body>
-<div class="header text-center justify-content-center align-items-center row">
-	тут хэдер<br>
-</div>
+

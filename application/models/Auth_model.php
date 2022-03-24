@@ -19,6 +19,8 @@ class Auth_model extends CI_Model {
 		if (password_verify($password, $users['password'])) {
 			$response['is_authorized'] = true;
 			$response['user_name'] = $users['name'];
+			$response['id_user'] = $users['id_user'];
+			$response['login'] = $users['login'];
 		}
 		else {
 			$response['is_authorized'] = false;

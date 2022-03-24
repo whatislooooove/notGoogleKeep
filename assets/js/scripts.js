@@ -3,8 +3,6 @@ Vue.component("modal-add", {
 	template: "#modal-template",
 	methods: {
 		addNote() {
-			console.log(this.title);
-			console.log(this.description);
 
 			let noteData = {
 				title: this.title,
@@ -15,8 +13,13 @@ Vue.component("modal-add", {
 					if (res.data.errors) {
 						this.errors = res.data.errors;
 					} else {
-						// window.location.reload();
-						console.log('good!')
+						vm.keeps.push({
+							title: res.data.title,
+							text: res.data.text,
+							dateupd: timeConverter(res.data.date_update),
+							dateend: timeConverter(res.data.date_end),
+							id: res.data.id_note
+						});
 					}
 				});
 			this.$emit('close');
@@ -75,8 +78,6 @@ Vue.component('signin', {
 					<label for="exampleInputEmail1">Введите логин</label>
 					<input type="text" v-model="login" class="form-control" id="login" aria-describedby="emailHelp"
 						   placeholder="Enter login" required>
-					<small id="emailHelp" class="form-text text-muted">We'll never share your login with anyone
-						else =).</small>
 				</div>
 				<div class="form-group">
 					<label for="exampleInputPassword1">Введите пароль</label>
@@ -100,8 +101,7 @@ Vue.component('signin', {
 				login: this.login,
 				password: this.password
 			}
-			// this.login = null;
-			// this.password = null;
+
 			this.errors = [];
 
 			if (formInputs.login.length < 4) {
@@ -239,17 +239,18 @@ Vue.component('keep', {
 		<div class="card-body">
 			<div class="row">
 				<h5 class="card-title col-11">{{title}}</h5>
-				<a href="#" v-bind:id="del" class="deleteNote col-1 justify-content-end row" @click="deleteNote">Удалить</a>
+				<a href="#" class="deleteNote col-1 justify-content-end row" @click="deleteNote">Удалить</a>
 			</div>
     		<p class="card-text">{{text}}</p>
     		<p class="card-text"><small class="text-muted">Last updated: {{upd}}</small></p>
     		<p class="card-text"><small class="text-muted">End date: {{end}}</small></p>
    		</div>
   	</div>`,
+
 	methods: {
 		deleteNote(e) {
-			let neededBlock = e.currentTarget.closest(`[data-id]`);
-			let blockId = neededBlock.getAttribute('data-id');
+			let neededBlock = e.currentTarget.closest(`[id]`);
+			let blockId = neededBlock.getAttribute('id');
 			neededBlock.remove();
 			axios.post('/index.php/notelist/delete', blockId)
 				.then(res => {
@@ -262,10 +263,24 @@ Vue.component('keep', {
 })
 
 // start app
-new Vue({
+let vm = new Vue({
 	el: "#app",
 	data: {
 		showModalAdd: false,
-		showModalEdit: false
+		showModalEdit: false,
+		keeps: []
 	}
 });
+
+function timeConverter(UNIX_timestamp){
+	var a = new Date(UNIX_timestamp * 1000);
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	var year = a.getFullYear();
+	var month = ((a.getMonth() + 1) < 10) ? '0' + (Number(a.getMonth()) + 1) : a.getMonth();
+	var date = a.getDate();
+	var hour = a.getHours();
+	var min = a.getMinutes();
+	var sec = a.getSeconds();
+	var time = year + '.' + month  + '.' + date + ' ';
+	return time;
+}
